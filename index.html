@@ -46,7 +46,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             border: 5px solid white;
             animation: float 3s ease-in-out infinite;
-            transition: opacity 0.5s ease-in-out; /* Smooth swap transition */
+            transition: opacity 0.5s ease-in-out;
         }
 
         @keyframes float {
@@ -56,12 +56,12 @@
 
         h1 { color: #d63384; font-size: 2rem; margin-bottom: 20px; }
         
-        .buttons { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .buttons { display: flex; justify-content: center; gap: 20px; margin-top: 20px; min-height: 60px; }
 
         button { padding: 15px 25px; font-size: 1.1rem; border: none; border-radius: 10px; cursor: pointer; transition: 0.3s; }
 
         #yesBtn { background-color: #ff4d6d; color: white; font-weight: bold; }
-        #noBtn { background-color: #6c757d; color: white; position: relative; }
+        #noBtn { background-color: #6c757d; color: white; position: relative; z-index: 1000; touch-action: none; }
 
         #letterBox {
             display: none;
@@ -105,7 +105,7 @@
             
             <div class="buttons" id="buttonGroup">
                 <button id="yesBtn" onclick="celebrate()">Yes!</button>
-                <button id="noBtn" onmouseover="moveButton()">No</button>
+                <button id="noBtn" type="button" onmouseover="moveButton(event)" ontouchstart="moveButton(event)">No</button>
             </div>
 
             <div id="letterBox">
@@ -121,46 +121,42 @@
     </div>
 
     <script>
-       function moveButton() {
-    const btn = document.getElementById('noBtn');
-    
-    // Calculate random positions (using 70% of screen to stay safe)
-    const newX = Math.floor(Math.random() * (window.innerWidth * 0.7));
-    const newY = Math.floor(Math.random() * (window.innerHeight * 0.7));
+        function moveButton(event) {
+            if (event) {
+                if (event.cancelable) event.preventDefault();
+            }
 
-    // Force the button to be fixed so it can fly anywhere
-    btn.style.position = 'fixed';
-    
-    // Apply the coordinates directly
-    btn.style.left = newX + 'px';
-    btn.style.top = newY + 'px';
-    
-    // Ensure it's not hidden behind anything
-    btn.style.zIndex = '1000';
-    
-    // This stops mobile phones from getting "confused" and freezing the button
-    btn.style.touchAction = 'none';
-}
+            const btn = document.getElementById('noBtn');
+            
+            // Keeps the button moving within the screen view
+            const x = Math.floor(Math.random() * (window.innerWidth - btn.offsetWidth - 50));
+            const y = Math.floor(Math.random() * (window.innerHeight - btn.offsetHeight - 50));
+
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            
+            // Mobile fix: force the browser to let go of the touch
+            btn.style.pointerEvents = 'none';
+            setTimeout(() => {
+                btn.style.pointerEvents = 'auto';
+            }, 100);
+        }
+
         function celebrate() {
-            // 1. Update the Text
             document.getElementById('mainText').innerHTML = "Yay! I love you! ❤️<br><small style='font-size: 1rem; color: #ff4d6d;'>Best Valentine Ever!</small>";
-            
-            // 2. Hide the Buttons
             document.getElementById('buttonGroup').style.display = 'none';
-            
-            // 3. Show the Letter
             document.getElementById('letterBox').style.display = 'block';
 
-            // 4. SWAP THE PHOTOS HERE
-            // Replace 'new-left.jpg' and 'new-right.jpg' with your 2nd set of photos
+            // New Photos
             document.getElementById('leftPic').src = "Kissing pic.jpg";
             document.getElementById('rightPic').src = "Cute pic.jpg";
             
-            // 5. Trigger Hearts
             createFallingHearts();
         }
 
         function createFallingHearts() {
+            const container = document.getElementById('heartContainer');
             for(let i = 0; i < 50; i++) {
                 const heart = document.createElement('div');
                 heart.innerHTML = '❤️';
@@ -169,7 +165,7 @@
                 heart.style.top = '-20px';
                 heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
                 heart.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
-                document.getElementById('heartContainer').appendChild(heart);
+                container.appendChild(heart);
             }
         }
     </script>
@@ -181,6 +177,3 @@
     </style>
 </body>
 </html>
-
-
-
