@@ -121,14 +121,23 @@
     </div>
 
     <script>
-        function moveButton() {
-            const btn = document.getElementById('noBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-            btn.style.position = 'fixed';
-            btn.style.left = x + 'px';
-            btn.style.top = y + 'px';
-        }
+       function moveButton(btn) {
+    // We subtract a bit more (50-100px) to keep it away from the very edges
+    const padding = 100; 
+    const maxWidth = window.innerWidth - btn.offsetWidth - padding;
+    const maxHeight = window.innerHeight - btn.offsetHeight - padding;
+
+    // Ensure the math doesn't result in negative numbers on very small screens
+    const x = Math.max(padding, Math.random() * maxWidth);
+    const y = Math.max(padding, Math.random() * maxHeight);
+
+    btn.style.position = 'fixed';
+    btn.style.left = x + 'px';
+    btn.style.top = y + 'px';
+    
+    // Adding this ensures the button stays on top of everything else
+    btn.style.zIndex = '1000';
+}
 
         function celebrate() {
             // 1. Update the Text
@@ -170,3 +179,4 @@
     </style>
 </body>
 </html>
+
