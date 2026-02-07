@@ -14,7 +14,6 @@
             background-color: #ffeef2;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
-            touch-action: manipulation;
         }
 
         .content-wrapper {
@@ -34,8 +33,11 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 10;
-            max-width: 450px;
+            max-width: 500px;
             width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .side-pic {
@@ -53,7 +55,7 @@
             50% { transform: translateY(-10px); }
         }
 
-        h1 { color: #d63384; font-size: 2rem; margin-bottom: 20px; }
+        h1 { color: #d63384; font-size: 2rem; margin-bottom: 20px; z-index: 20; position: relative; }
         
         .buttons { 
             display: flex; 
@@ -61,7 +63,7 @@
             align-items: center; 
             gap: 20px; 
             margin-top: 20px; 
-            min-height: 150px; /* Space for the growing button */
+            flex-wrap: wrap; /* Allows "No" to move down if "Yes" gets too big */
         }
 
         button { 
@@ -70,22 +72,18 @@
             border: none; 
             border-radius: 10px; 
             cursor: pointer; 
+            transition: transform 0.2s ease, font-size 0.2s ease;
         }
 
         #yesBtn { 
             background-color: #ff4d6d; 
             color: white; 
             font-weight: bold; 
-            transition: transform 0.2s ease; 
-            z-index: 5;
         }
 
         #noBtn { 
             background-color: #6c757d; 
             color: white; 
-            position: relative; 
-            z-index: 1000;
-            white-space: nowrap;
         }
 
         #letterBox {
@@ -114,7 +112,7 @@
         @media (max-width: 768px) {
             .content-wrapper { flex-direction: column; }
             .side-pic { width: 150px; height: 180px; }
-            .container { order: -1; }
+            .container { order: -1; padding: 20px; }
         }
     </style>
 </head>
@@ -130,7 +128,7 @@
             
             <div class="buttons" id="buttonGroup">
                 <button id="yesBtn" onclick="celebrate()">Yes!</button>
-                <button id="noBtn" type="button" onmouseover="moveButton(event)" ontouchstart="moveButton(event)">No</button>
+                <button id="noBtn" onclick="handleNoClick()" type="button">No</button>
             </div>
 
             <div id="letterBox">
@@ -152,42 +150,28 @@
             "Are you sure? 🥺", 
             "Really sure??", 
             "Please? ❤️", 
-            "Nem... pleasee", 
+            "Nem... please!", 
             "I'm gonna cry...", 
-            "Youre breaking my heart :c",
-            "Please click yes :c"
+            "You're breaking my heart!", 
+            "Just click Yes already! 😂"
         ];
 
-        function moveButton(event) {
-            if (event) {
-                if (event.cancelable) event.preventDefault();
-            }
-
+        function handleNoClick() {
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             
-            // 1. Update text
+            // 1. Update text of No button
             noClickCount++;
             const textIndex = Math.min(noClickCount, noTexts.length - 1);
             noBtn.innerHTML = noTexts[textIndex];
 
             // 2. Make Yes button grow
-            const currentScale = 1 + (noClickCount * 0.3);
-            yesBtn.style.transform = `scale(${currentScale})`;
-
-            // 3. Move the No button
-            const x = Math.floor(Math.random() * (window.innerWidth * 0.7));
-            const y = Math.floor(Math.random() * (window.innerHeight * 0.7));
-
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
-
-            // 4. Mobile Refresh logic
-            noBtn.style.pointerEvents = 'none';
-            setTimeout(() => {
-                noBtn.style.pointerEvents = 'auto';
-            }, 150);
+            // This increases font size and padding to grow the button physically
+            const newFontSize = 1.1 + (noClickCount * 0.4); 
+            const newPadding = 15 + (noClickCount * 10);
+            
+            yesBtn.style.fontSize = newFontSize + "rem";
+            yesBtn.style.padding = newPadding + "px " + (newPadding * 1.5) + "px";
         }
 
         function celebrate() {
@@ -223,4 +207,3 @@
     </style>
 </body>
 </html>
-
