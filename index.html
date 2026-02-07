@@ -124,21 +124,23 @@
        function moveButton() {
     const btn = document.getElementById('noBtn');
     
-    // We use 80% of the screen height/width to keep it away from edges
-    const x = Math.random() * (window.innerWidth * 0.8);
-    const y = Math.random() * (window.innerHeight * 0.8);
+    // Calculate random positions (using 70% of screen to stay safe)
+    const newX = Math.floor(Math.random() * (window.innerWidth * 0.7));
+    const newY = Math.floor(Math.random() * (window.innerHeight * 0.7));
 
-    // Using absolute + transform is more stable for mobile browsers
+    // Force the button to be fixed so it can fly anywhere
     btn.style.position = 'fixed';
-    btn.style.left = '0px';
-    btn.style.top = '0px';
-    btn.style.transform = `translate(${x}px, ${y}px)`;
     
-    // This prevents the phone from "selecting" the text or freezing
-    btn.style.touchAction = 'none'; 
+    // Apply the coordinates directly
+    btn.style.left = newX + 'px';
+    btn.style.top = newY + 'px';
+    
+    // Ensure it's not hidden behind anything
     btn.style.zIndex = '1000';
-};
-
+    
+    // This stops mobile phones from getting "confused" and freezing the button
+    btn.style.touchAction = 'none';
+}
         function celebrate() {
             // 1. Update the Text
             document.getElementById('mainText').innerHTML = "Yay! I love you! ❤️<br><small style='font-size: 1rem; color: #ff4d6d;'>Best Valentine Ever!</small>";
@@ -179,5 +181,6 @@
     </style>
 </body>
 </html>
+
 
 
